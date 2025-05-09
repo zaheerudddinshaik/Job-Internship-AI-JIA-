@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JIA - Job & Internship Assistant</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body>
+  <script>
+    window.onload = function() {
+      const authButtonsDiv = document.querySelector('.auth-buttons');
+      const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+  
+      if (loggedInUser && loggedInUser.name) {
+        authButtonsDiv.innerHTML = `
+          <div class="user-profile">
+            <span>👤 ${loggedInUser.name}</span>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+          </div>
+        `;
+      } else {
+        authButtonsDiv.innerHTML = `
+          <button onclick="window.location.href='login.html'" class="primary-btn">Login</button>
+        `;
+      }
+    };
+  
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      window.location.reload();
+    }
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="H99pIgYjJ6zWSJUrC5mF9";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+
+  </script>
+  
+  <header>
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+      <div class="logo">
+        <a href="index.html">
+          <h2>JIA</h2>
+        </a>
+      </div>
+  
+      <nav>
+        <ul class="nav-links" style="display: flex; gap: 20px; list-style: none;">
+          <li><a href="internships.html">Internships & Jobs</a></li>
+          <li><a href="resume-builder.html">Resume Builder</a></li>
+          <li><a href="resume-analyzer.html">Resume Analyzer</a></li>
+          <li><a href="practice.html">Practice</a></li>
+        </ul>
+      </nav>
+  
+      <div class="auth-buttons" style="display: flex; gap: 10px;">
+        <button onclick="window.location.href='login.html'" class="primary-btn">Login</button>
+      </div>
+    </div>
+  </header>
+  
+
+  <section class="hero">
+    <div class="container hero-content">
+      <h1>Kickstart Your Career with <span class="highlight">JIA</span></h1>
+      <p>Discover internships, job opportunities, mentorships, and resources to land your dream job.</p>
+      <button class="primary-btn" onclick="window.location.href='internships.html'">Get Started</button>
+    </div>
+  </section>
+
+  <section class="opportunity-cards container">
+    <div class="card">
+      <a href="internships.html">
+        <h3>Internships & Jobs</h3>
+        <p>Gain practical experience <br>Choose Your Career</p>
+      </a>
+    </div>
+    <div class="card">
+      <a href="resume-builder.html">
+        <h3>Resume Builder</h3>
+        <p>Create a strong resume</p>
+      </a>
+    </div>
+    <div class="card">
+      <a href="resume-analyzer.html">
+        <h3>Resume Analyzer</h3>
+        <p>Get instant feedback</p>
+      </a>
+    </div>
+    <div class="card">
+      <a href="practice.html">
+        <h3>Practice</h3>
+        <p>Sharpen your skills</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- LOGIN MODAL -->
+  <div id="login-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="close-modal" style="float:right; cursor:pointer;">&times;</span>
+      <h2>Login</h2>
+
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required/>
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required/>
+        </div>
+        <button type="submit">Login</button>
+        <p>Don't have an account? <a href="#" id="signup-link">Sign up</a></p>
+      </form>
+
+      <div id="g_id_onload"
+           data-client_id="817748357150-m3jrct5mscior3lmg6e14i86aeefhhpg.apps.googleusercontent.com"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="outline"
+           data-text="continue_with"
+           data-shape="pill"
+           data-logo_alignment="left">
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 JIA - Job & Internship AI Assistant</p>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+</body>
+</html>

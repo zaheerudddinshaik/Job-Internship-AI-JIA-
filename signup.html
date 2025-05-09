@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Sign Up</h2>
+
+    <!-- Google Sign-In Initialization -->
+    <div id="g_id_onload"
+         data-client_id="817748357150-m3jrct5mscior3lmg6e14i86aeefhhpg.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+
+    <!-- Google Sign-In Button -->
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="continue_with"
+         data-shape="pill"
+         data-logo_alignment="left">
+    </div>
+
+    <!-- Hidden Sign-Up Form -->
+    <form id="signup-form" style="display:none;">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+      </div>
+      <div class="input-group">
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" required>
+      </div>
+      <button type="submit">Create Account</button>
+    </form>
+  </div>
+
+  <script>
+    // Handle Google Sign-In
+    function handleCredentialResponse(response) {
+      const data = parseJwt(response.credential);
+      const username = data.email.split('@')[0];
+
+      document.getElementById("username").value = username;
+      document.getElementById("signup-form").style.display = "block";
+    }
+
+    // Decode JWT token from Google
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64).split('').map(c =>
+          '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join('')
+      );
+      return JSON.parse(jsonPayload);
+    }
+
+    // Handle Signup Form
+    document.getElementById("signup-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match. Please re-enter.");
+        return;
+      }
+
+      // Save new user to localStorage (simulating registration)
+      const newUser = {
+        name: username,
+        username: username,
+        password: password
+      };
+
+      localStorage.setItem("jiaUser", JSON.stringify(newUser));
+      localStorage.setItem("loggedInUser", JSON.stringify({ name: username }));
+
+      // Redirect to homepage
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>

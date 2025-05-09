@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Interview Trainer - JIA</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #f4f7f6;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #1a1a1a;
+      padding: 20px 0;
+      color: #fff;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .logo h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    nav a:hover {
+      color: #d1d1d1;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .auth-buttons a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .auth-buttons a:hover {
+      color: #d1d1d1;
+    }
+
+    .training-container {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #333;
+    }
+
+    p {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    #start-button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #start-button:hover {
+      background-color: #0056b3;
+    }
+
+    #tips {
+      display: none;
+      background-color: #fff3cd;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin-top: 20px;
+      color: #856404;
+    }
+
+    .question-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+      margin-top: 30px;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    #current-question {
+      font-size: 24px;
+      color: #333;
+    }
+
+    video {
+      margin-top: 30px;
+      width: 100%;
+      max-width: 800px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+    }
+
+    .feedback-report {
+      background: #eef6f9;
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
+      width: 100%;
+      max-width: 800px;
+      display: none;
+    }
+
+    footer {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    footer p {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <a href="index.html"><h2>JIA</h2></a>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="internships.html">Internships & Jobs</a></li>
+          <li><a href="resume-builder.html">Resume Builder</a></li>
+          <li><a href="resume-analyzer.html">Resume Analyzer</a></li>
+          <li><a href="practice.html">Practice</a></li>
+        </ul>
+      </nav>
+
+      <div class="auth-buttons">
+        <!-- Authentication buttons can go here -->
+      </div>
+    </div>
+  </header>
+
+  <section class="container training-container">
+    <h1>🎥 AI Interview Trainer</h1>
+    <p>Answer the interview questions. Your posture, dressing, and speaking skills will be evaluated!</p>
+
+    <!-- Start Interview Button -->
+    <button id="start-button">Start Interview</button>
+
+    <!-- Tips Section -->
+    <div id="tips">
+      <p>Get ready! Sit straight, look into the camera, and speak clearly. Starting in <span id="countdown">5</span> seconds...</p>
+    </div>
+
+    <!-- Question Box -->
+    <div class="question-box" id="question-box">
+      <h2 id="current-question">Preparing your interview...</h2>
+    </div>
+
+    <!-- Video and Canvas for Snapshot -->
+    <video id="preview" autoplay muted></video>
+    <canvas id="snapshot"></canvas>
+
+    <!-- Feedback Report -->
+    <div class="feedback-report" id="feedback"></div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 JIA - Job & Internship AI Assistant</p>
+    </div>
+  </footer>
+
+  <script>
+    const questions = [
+      "Tell me about yourself.",
+      "Why do you want to work here?",
+      "What are your strengths?",
+      "What are your weaknesses?",
+      "Describe a challenge you faced and how you overcame it.",
+      "Where do you see yourself in five years?",
+      "Why should we hire you?",
+      "Tell me about a time you worked in a team.",
+      "How do you handle pressure?",
+      "Do you have any questions for us?"
+    ];
+
+    let questionIndex = 0;
+    let stream, mediaRecorder, recordedBlobs = [];
+    let speakingDuration = 0;
+    let recognition;
+    let hasConfirmed = false;
+
+    const startButton = document.getElementById('start-button');
+    const tipsDiv = document.getElementById('tips');
+    const countdownSpan = document.getElementById('countdown');
+
+    startButton.addEventListener('click', () => {
+      if (!hasConfirmed) {
+        document.getElementById('current-question').textContent = "Are you ready? Click 'Start Interview' again to begin!";
+        hasConfirmed = true;
+      } else {
+        // Show tips and start countdown
+        tipsDiv.style.display = 'block';
+        let countdown = 5;
+        countdownSpan.textContent = countdown;
+        const timer = setInterval(() => {
+          countdown--;
+          countdownSpan.textContent = countdown;
+          if (countdown === 0) {
+            clearInterval(timer);
+            tipsDiv.style.display = 'none';
+            startButton.style.display = 'none'; // Hide start button when starting
+            startInterview();
+          }
+        }, 1000);
+      }
+    });
+
+    async function startInterview() {
+      // Start webcam
+      stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      document.getElementById('preview').srcObject = stream;
+
+      // Start recording
+      recordedBlobs = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedBlobs.push(e.data); };
+      mediaRecorder.start();
+
+      // Start speech recognition
+      startSpeechRecognition();
+
+      // Start showing questions
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      if (questionIndex < questions.length) {
+        document.getElementById('current-question').textContent = questions[questionIndex];
+        questionIndex++;
+        setTimeout(nextQuestion, 10000); // 10 seconds per question
+      } else {
+        endInterview();
+      }
+    }
+
+    function startSpeechRecognition() {
+      if (!('webkitSpeechRecognition' in window)) return;
+      recognition = new webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.lang = 'en-US';
+      recognition.onresult = function(event) {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            speakingDuration += event.results[i][0].transcript.length / 5; // rough estimation
+          }
+        }
+      };
+      recognition.start();
+    }
+
+    function endInterview() {
+      mediaRecorder.stop();
+      stream.getTracks().forEach(track => track.stop());
+      if (recognition) recognition.stop();
+
+      document.getElementById('current-question').textContent = "Interview Completed! Generating Feedback...";
+
+      setTimeout(() => generateFeedback(), 3000);
+    }
+
+    function generateFeedback() {
+      // Capture snapshot for posture and dressing simulation
+      const canvas = document.getElementById('snapshot');
+      const video = document.getElementById('preview');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Simulate posture, dressing, English skills feedback
+      let posture = Math.random() > 0.5 ? "Good (Straight posture)" : "Needs Improvement (Slouching detected)";
+      let dressing = Math.random() > 0.5 ? "Professional Appearance" : "Casual/Needs Formal Dress";
+      let englishSkill = speakingDuration > 100 ? "Fluent English Communication" : "Basic/Moderate English Skills";
+      let confidence = Math.min(Math.round((speakingDuration / 120) * 100), 100); // Out of 100
+
+      const feedbackDiv = document.getElementById('feedback');
+      feedbackDiv.innerHTML = `
+        <h2>📝 AI Feedback Report</h2>
+        <p><strong>Posture:</strong> ${posture}</p>
+        <p><strong>Dressing Style:</strong> ${dressing}</p>
+        <p><strong>English Communication:</strong> ${englishSkill}</p>
+        <p><strong>Confidence Score:</strong> ${confidence}%</p>
+      `;
+      feedbackDiv.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
